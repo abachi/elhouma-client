@@ -1,6 +1,9 @@
 <template>
     <div class="w-1/3 shadow rounded p-6 mx-auto my-12">
-        <h1 class="font-bold text-xl my-4">Login</h1>
+        <div class="flex items-center">
+            <h1 class="font-bold text-xl my-4 mr-3">Login</h1>
+            <span v-if="loading" class="ml-3 text-green-500">Loading...</span>
+        </div>
         <form @submit.prevent="submit">
             <div class="my-2">
                 <label class="inline-block w-1/4" for="email">Email</label>
@@ -23,7 +26,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapActions } from 'vuex';
 export default {
     name: 'login',
     components: {
@@ -35,15 +38,22 @@ export default {
                 email: '',
                 password: '',
             },
-            isLoading: false,
         }
     },
     methods: {
+        ...mapActions({
+            login: 'auth/login'
+        }),
         submit(){
-            console.log('submitted');
-            axios.post('/auth/login', this.form).then((res) => {
-                console.log(res);
-            });
+            this.login(this.form);
+        }
+    },
+    computed: {
+        loading(){
+            return this.$store.state.auth.loading;
+        },
+        currentUser(){
+            return this.$store.state.auth.user;
         }
     }
 }
