@@ -50,7 +50,7 @@ export default {
         submit(){
             this.login(this.form).then(() => {
                 if(this.authenticated){
-                    this.$router.push({
+                    this.$router.replace({
                         name: 'home'
                     });
                 }

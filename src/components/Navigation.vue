@@ -5,7 +5,7 @@
                 ElHouma
             </router-link>
         </div>
-        <ul class="flex">
+        <ul class="flex items-center">
             <template v-if="authenticated">
                 <li class="inline-block mx-2">
                     <router-link :class="'text-blue-500'" :to="{ name: 'new-report' }">New Report</router-link>
@@ -17,6 +17,9 @@
 
                 <li class="inline-block mx-2">
                     <p class="text-sm font-semibold">{{ user.name }}</p>
+                </li>
+                <li class="inline-block mx-2">
+                    <a class="text-gray-500 text-xs cursor-pointer" src="#" @click.prevent="logout">Logout</a>
                 </li>
             </template>
             <template v-else>
@@ -32,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 export default{
 
     computed: {
@@ -40,6 +43,19 @@ export default{
             authenticated: 'auth/authenticated',
             user: 'auth/user',
         })
+    },
+
+    methods: {
+        ...mapActions({
+            logoutAction: 'auth/logout'
+        }),
+        logout(){
+            this.logoutAction().then(() => {
+                this.$router.replace({
+                    name: 'login'
+                })
+            });
+        }
     }
 }
 </script>

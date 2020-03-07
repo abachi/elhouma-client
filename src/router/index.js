@@ -6,6 +6,9 @@ import Register from '../views/Register.vue'
 import ResetPassword from '../views/ResetPassword.vue'
 import NewReport from '../views/NewReport.vue'
 import MyReports from '../views/MyReports.vue'
+import { 
+    requireAuthentication,
+    redirectiIfAuthenticated } from '@/middleware/auth';
 
 Vue.use(VueRouter)
 
@@ -18,12 +21,19 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
+    beforeEnter: redirectiIfAuthenticated
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    beforeEnter: requireAuthentication
   },
   {
     path: '/register',
     name: 'register',
-    component: Register
+    component: Register,
+    beforeEnter: redirectiIfAuthenticated
   },
   {
     path: '/reset-password',
@@ -33,12 +43,14 @@ const routes = [
   {
       path: '/new-report',
       name: 'new-report',
-      component: NewReport
+      component: NewReport,
+      beforeEnter: requireAuthentication
   },
   {
       path: '/my-reports',
       name: 'my-reports',
-      component: MyReports
+      component: MyReports,
+      beforeEnter: requireAuthentication
   }
 ]
 

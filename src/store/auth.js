@@ -43,7 +43,7 @@ export default {
     actions: {
         login({ commit }, credentials){
             commit('SET_LOADING', true);
-            axios.post('/auth/login', credentials).then(response => {
+            return axios.post('/auth/login', credentials).then(response => {
                 commit('SET_TOKEN', response.data.token);
                 commit('SET_USER', response.data.user);
                 commit('SET_LOADING', false);
@@ -55,5 +55,31 @@ export default {
                 commit('SET_TOKEN', null);
             });
         },
+
+        async attempt({ commit, state }, token){
+            if(token){
+                commit('SET_TOKEN', token);
+            }
+
+            if(!state.token){
+                return;
+            }
+
+            try {
+                await axios.get('/auth/attempt').then(response => {
+                    commit('SET_USER', response.data.user);
+                });
+                
+            } catch (error) {
+                commit('SET_USER', null);
+                commit('SET_TOKEN', null);
+            }
+        },
+        logout({ commit }){
+            return axios.post('/auth/logout').then(() => {
+                commit('SET_USER', null);
+                commit('SET_TOKEN', null);
+            });
+        }
     },
 }
