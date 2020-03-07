@@ -5,6 +5,7 @@ export default {
 
     state: {
         loading: false,
+        failed: false,
         token: null,
         user: null,
     },
@@ -19,8 +20,25 @@ export default {
 
         SET_LOADING(state, isLoading){
             state.loading = isLoading;
-        }
+        },
 
+        SET_FAILED(state, isFailed){
+            state.failed = isFailed;
+        }
+    },
+    getters: {
+        loading(state){
+            return state.loading;
+        },
+        user(state){
+            return state.user
+        },
+        authenticated(state){
+            return state.token && state.user;
+        },
+        failed(state){
+            return state.failed;
+        },
     },
     actions: {
         login({ commit }, credentials){
@@ -29,9 +47,12 @@ export default {
                 commit('SET_TOKEN', response.data.token);
                 commit('SET_USER', response.data.user);
                 commit('SET_LOADING', false);
-            }).catch(err => {
+                commit('SET_FAILED', false);
+            }).catch(() => {
                 commit('SET_LOADING', false);
-                console.log('Errors:', err);
+                commit('SET_FAILED', true);
+                commit('SET_USER', null);
+                commit('SET_TOKEN', null);
             });
         },
     },

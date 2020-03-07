@@ -4,6 +4,9 @@
             <h1 class="font-bold text-xl my-4 mr-3">Login</h1>
             <span v-if="loading" class="ml-3 text-green-500">Loading...</span>
         </div>
+        <div v-if="failed">
+            <p class="text-red-500">Something went wrong.</p>
+        </div>
         <form @submit.prevent="submit">
             <div class="my-2">
                 <label class="inline-block w-1/4" for="email">Email</label>
@@ -26,7 +29,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 export default {
     name: 'login',
     components: {
@@ -37,7 +40,7 @@ export default {
             form: {
                 email: '',
                 password: '',
-            },
+            }
         }
     },
     methods: {
@@ -45,16 +48,22 @@ export default {
             login: 'auth/login'
         }),
         submit(){
-            this.login(this.form);
+            this.login(this.form).then(res => {
+                if(this.authenticated){
+                    this.$router.push({
+                        name: 'home'
+                    });
+                }
+            });
         }
     },
     computed: {
-        loading(){
-            return this.$store.state.auth.loading;
-        },
-        currentUser(){
-            return this.$store.state.auth.user;
-        }
+        ...mapGetters({
+            loading: 'auth/loading',
+            failed: 'auth/failed',
+            authenticated: 'auth/authenticated',
+            user: 'auth/user'
+        }),
     }
 }
 </script>
