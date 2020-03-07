@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import axios from 'axios';
 
+require('@/store/subscriber');
+
 axios.defaults.baseURL = 'http://localhost:8000/api';
 
 Vue.config.productionTip = false
