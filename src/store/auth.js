@@ -41,19 +41,21 @@ export default {
         },
     },
     actions: {
-        login({ commit }, credentials){
+        async login({ commit }, credentials){
             commit('SET_LOADING', true);
-            return axios.post('/auth/login', credentials).then(response => {
+            const req = await axios.post('/auth/login', credentials).then(response => {
                 commit('SET_TOKEN', response.data.token);
                 commit('SET_USER', response.data.user);
                 commit('SET_LOADING', false);
                 commit('SET_FAILED', false);
-            }).catch(() => {
+            }).catch((error) => {
                 commit('SET_LOADING', false);
                 commit('SET_FAILED', true);
                 commit('SET_USER', null);
                 commit('SET_TOKEN', null);
+                throw error;
             });
+            return req;
         },
 
         async attempt({ commit, state }, token){

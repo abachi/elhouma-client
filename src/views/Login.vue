@@ -4,9 +4,9 @@
             <h1 class="font-bold text-xl my-4 mr-3">Login</h1>
             <span v-if="loading" class="ml-3 text-green-500">Loading...</span>
         </div>
-        <div v-if="failed">
-            <p class="text-red-500">Something went wrong.</p>
-        </div>
+        <ul>
+            <li v-for="error in form.errors" :key="error" class="text-red-500">{{ error }}</li>
+        </ul>
         <form @submit.prevent="submit">
             <div class="my-2">
                 <label class="inline-block w-1/4" for="email">Email</label>
@@ -40,6 +40,7 @@ export default {
             form: {
                 email: '',
                 password: '',
+                errors: []
             }
         }
     },
@@ -54,6 +55,8 @@ export default {
                         name: 'home'
                     });
                 }
+            }).catch(error => {
+                this.form.errors = error.response.data;
             });
         }
     },
