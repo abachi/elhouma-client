@@ -4,7 +4,7 @@
     :zoom="13"
     :center="center">
         <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker v-for="report in reports" :key="report.id" :lat-lng="report.position">
+        <l-marker v-for="report in reports" :key="report.id" :lat-lng="[report.lat, report.lng]">
             <l-popup :class="'w-64'">
                 <div class="w-full flex flex-col">
                     <div class="report-picture w-full h-48">
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -41,12 +42,7 @@ export default {
 
   data(){
       return {
-        reports: [
-            {id: 1, description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit.', picture: 'https://via.placeholder.com/150', position: [47.41922, -1.249482]},
-            {id: 2, description: 'Sed officia saepe sapiente perferendis ', picture: 'https://via.placeholder.com/150', position: [47.42333, -1.239492]},
-            {id: 3, description: 'dolores nesciunt rerum eius placeat dicta ', picture: 'https://via.placeholder.com/150', position: [47.43344, -1.219472]},
-            {id: 4, description: '', picture: 'https://via.placeholder.com/150', position: [47.44355, -1.229462]},
-        ],
+        reports: [],
         center: latLng(47.41322, -1.219482),
         position: latLng(47.41322, -1.219482),
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -54,5 +50,17 @@ export default {
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       }
   },
+  created(){
+      this.fetchReports();
+  },
+  methods: {
+      fetchReports(){
+          axios.get('/reports/index').then(response => {
+              this.reports = response.data.data;
+          }).catch( error => {
+              console.log(error);
+          })
+      }
+  }
 }
 </script>
