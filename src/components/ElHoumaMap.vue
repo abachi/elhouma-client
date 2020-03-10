@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-screen">
     <l-map 
-    :zoom="13"
+    :zoom="zoom"
     :center="center">
         <l-tile-layer :url="url"></l-tile-layer>
         <l-marker v-for="report in reports" :key="report.id" :lat-lng="[report.lat, report.lng]">
@@ -43,15 +43,26 @@ export default {
   data(){
       return {
         reports: [],
-        center: latLng(47.41322, -1.219482),
-        position: latLng(47.41322, -1.219482),
+        center: latLng(31.6032088,-2.2257426), // bechar by default
+        zoom: 17,
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       }
   },
   created(){
       this.fetchReports();
+  },
+  mounted(){
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        this.center = latLng(latitude, longitude);
+      }, error => {
+        if(error.code === 1){
+            this.center = latLng(30.7384036,3.7068746); // Algeria center
+            this.zoom = 5;
+            alert('Please allow access to geolocation for better experience.');
+        }
+      });
   },
   methods: {
       fetchReports(){
